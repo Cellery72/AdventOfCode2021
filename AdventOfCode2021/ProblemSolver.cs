@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdventOfCode2021.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -174,10 +175,35 @@ namespace AdventOfCode2021
         public static int Day4(List<string> input)
         {
             List<int> drawnNumbers = input.First().Split(',').Select(int.Parse).ToList();
+            List<BingoCard> bingoCards = new List<BingoCard>();
+            input.RemoveRange(0, 2);
 
+            List<string> currentCardContents = new List<string>();
 
+            for (int i = 0; i < input.Count(); ++i)
+            {
+                if (input[i] != string.Empty)
+                    currentCardContents.Add(input[i]);
+                else
+                {
+                    if(currentCardContents.Count!=0) bingoCards.Add(new BingoCard(currentCardContents));
+                    currentCardContents = new List<string>();
+                }
+            }
+
+            BingoCard winningCard = new BingoCard();
+            foreach(int number in drawnNumbers)
+            {
+                bingoCards.Select(bc => { bc.DrawnNumbers.Add(number);return bc; }).ToList();
+                if (bingoCards.Any(bc => bc.IsBingo))
+                {
+                    winningCard = bingoCards.FirstOrDefault(bc => bc.IsBingo);
+                    return winningCard.LosingNumbers.Sum()*winningCard.DrawnNumbers.Last(); 
+                }
+            }
 
             return -1;
         }
+
     }
 }
