@@ -11,7 +11,19 @@ namespace AdventOfCode2021.Models
         public List<int> N { get; set; }
         public List<int> G { get; set; }
         public List<int> O { get; set; }
-        public List<int> DrawnNumbers { get; set; }
+        public List<int> DrawnNumbers
+        {
+            get
+            {
+                return _DrawnNumbers;
+            }
+            set
+            {
+                _DrawnNumbers = value;
+            }
+        }
+        public int NumberOfDrawnNumbersBeforeWin => _NumberOfDrawnNumbersBeforeWin;
+
         public List<int> WinningNumbers { 
             get
             {
@@ -81,6 +93,8 @@ namespace AdventOfCode2021.Models
             }
             return false;
         }
+        private List<int> _DrawnNumbers { get; set; }
+        private int _NumberOfDrawnNumbersBeforeWin { get; set; }
 
         public BingoCard() { }
         public BingoCard(List<string> input, List<int> drawnNumbers = null)
@@ -102,6 +116,11 @@ namespace AdventOfCode2021.Models
                 G.Add(currentRow[3]);
                 O.Add(currentRow[4]);
             }
+        }
+
+        public void AddDrawnNumber(int num)
+        {
+            if(!IsBingo) _DrawnNumbers.Add(num);
         }
     }
 }

@@ -194,7 +194,7 @@ namespace AdventOfCode2021
             BingoCard winningCard = new BingoCard();
             foreach(int number in drawnNumbers)
             {
-                bingoCards.Select(bc => { bc.DrawnNumbers.Add(number);return bc; }).ToList();
+                bingoCards.Select(bc => { bc.DrawnNumbers.Add(number); return bc; }).ToList();
                 if (bingoCards.Any(bc => bc.IsBingo))
                 {
                     winningCard = bingoCards.FirstOrDefault(bc => bc.IsBingo);
@@ -204,6 +204,32 @@ namespace AdventOfCode2021
 
             return -1;
         }
+        public static int Day4Part2(List<string> input)
+        {
+            List<int> drawnNumbers = input.First().Split(',').Select(int.Parse).ToList();
+            List<BingoCard> bingoCards = new List<BingoCard>();
+            input.RemoveRange(0, 2);
 
+            List<string> currentCardContents = new List<string>();
+            for (int i = 0; i < input.Count(); ++i)
+            {
+                if (input[i] != string.Empty)
+                    currentCardContents.Add(input[i]);
+                else
+                {
+                    if (currentCardContents.Count != 0) bingoCards.Add(new BingoCard(currentCardContents));
+                    currentCardContents = new List<string>();
+                }
+            }
+
+            List<BingoCard> winningCards = new List<BingoCard>();
+            foreach (int number in drawnNumbers)
+            {
+                bingoCards.Where(bc => !bc.IsBingo).Select(bc => { bc.AddDrawnNumber(number); return bc; }).ToList();
+
+                if (bingoCards.Any(bc => bc.IsBingo)) winningCards.AddRange(bingoCards.Where(bc => bc.IsBingo && !winningCards.Contains(bc)));
+            }
+            return winningCards.Last().LosingNumbers.Sum() * winningCards.Last().DrawnNumbers.Last();
+        }
     }
 }
