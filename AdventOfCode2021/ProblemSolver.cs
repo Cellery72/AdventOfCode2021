@@ -134,7 +134,7 @@ namespace AdventOfCode2021
                 int zeroCount = tempInput.Count(c => c[i] == '0');
                 int oneCount = tempInput.Count(c => c[i] == '1');
 
-                if (tempInput.Count!=1)
+                if (tempInput.Count != 1)
                 {
                     if (zeroCount > oneCount)
                         tempInput.RemoveAll(c => c[i] == '1');
@@ -143,7 +143,7 @@ namespace AdventOfCode2021
                 }
                 else
                 {
-                    oxygenRating = Convert.ToInt32(tempInput.First(),2);
+                    oxygenRating = Convert.ToInt32(tempInput.First(), 2);
                     break;
                 }
             }
@@ -169,7 +169,7 @@ namespace AdventOfCode2021
                 }
             }
 
-            return oxygenRating*coRating;
+            return oxygenRating * coRating;
         }
 
         public static int Day4(List<string> input)
@@ -186,19 +186,19 @@ namespace AdventOfCode2021
                     currentCardContents.Add(input[i]);
                 else
                 {
-                    if(currentCardContents.Count!=0) bingoCards.Add(new BingoCard(currentCardContents));
+                    if (currentCardContents.Count != 0) bingoCards.Add(new BingoCard(currentCardContents));
                     currentCardContents = new List<string>();
                 }
             }
 
             BingoCard winningCard = new BingoCard();
-            foreach(int number in drawnNumbers)
+            foreach (int number in drawnNumbers)
             {
                 bingoCards.Select(bc => { bc.DrawnNumbers.Add(number); return bc; }).ToList();
                 if (bingoCards.Any(bc => bc.IsBingo))
                 {
                     winningCard = bingoCards.FirstOrDefault(bc => bc.IsBingo);
-                    return winningCard.LosingNumbers.Sum()*winningCard.DrawnNumbers.Last(); 
+                    return winningCard.LosingNumbers.Sum() * winningCard.DrawnNumbers.Last();
                 }
             }
 
@@ -230,6 +230,101 @@ namespace AdventOfCode2021
                 if (bingoCards.Any(bc => bc.IsBingo)) winningCards.AddRange(bingoCards.Where(bc => bc.IsBingo && !winningCards.Contains(bc)));
             }
             return winningCards.Last().LosingNumbers.Sum() * winningCards.Last().DrawnNumbers.Last();
+        }
+
+        public static int Day5(List<string> input)
+        {
+            List<List<string>> board = new List<List<string>>();
+
+            for (int i = 0; i < 1000; ++i) board.Add(Enumerable.Repeat(".", 1000).ToList());
+
+            List<Tuple<Tuple<string, string>, Tuple<string, string>>> paths = new List<Tuple<Tuple<string, string>, Tuple<string, string>>>();
+            foreach (string line in input)
+            {
+                string str = line;
+                string x1 = str.Split(" -> ")[0].Split(',')[0];
+                string y1 = str.Split(" -> ")[0].Split(',')[1];
+                string x2 = str.Split(" -> ")[1].Split(',')[0];
+                string y2 = str.Split(" -> ")[1].Split(',')[1];
+
+                Tuple<string, string> firstPair = new Tuple<string, string>(x1, y1);
+                Tuple<string, string> secondPair = new Tuple<string, string>(x2, y2);
+
+                paths.Add(new Tuple<Tuple<string, string>, Tuple<string, string>>(firstPair, secondPair));
+            }
+
+            foreach (Tuple<Tuple<string, string>, Tuple<string, string>> path in paths)
+            {
+                int x1 = int.Parse(path.Item1.Item1);
+                int y1 = int.Parse(path.Item1.Item2);
+                int x2 = int.Parse(path.Item2.Item1);
+                int y2 = int.Parse(path.Item2.Item2);
+                bool xSame = x1 == x2, ySame = y1 == y2;
+
+                if (ySame && xSame)
+                {
+                    var value = board[y1][x1];
+
+                    if (value == ".")
+                        value = "1";
+                    else
+                    {
+                        int iValue = int.Parse(value);
+                        iValue += 1;
+                        board[y1][x1] = iValue.ToString();
+                    }
+                }
+                else if (xSame)
+                {
+                    int smallerY = (y1 < y2) ? y1 : y2;
+                    int largerY = (y1 > y2) ? y1 : y2;
+
+                    List<List<string>> selectedLines = board.GetRange(smallerY, largerY - smallerY);
+                    for (int i = smallerY; i <= largerY; ++i)
+                    {
+                        var value = board[i][x1];
+
+                        if (value == ".") board[i][x1] = "1";
+                        else
+                        {
+                            int iValue = int.Parse(value);
+                            iValue += 1;
+                            board[i][x1] = iValue.ToString();
+                        }
+                    }
+                }
+                else if (ySame)
+                {
+                    int smallerX = (x1 < x2) ? x1 : x2;
+                    int largerX = (x1 > x2) ? x1 : x2;
+
+                    List<string> line = board[y1];
+                    for (int i = smallerX; i <= largerX; ++i)
+                    {
+                        var value = line[i];
+
+                        if (value == ".") board[y1][i] = "1";
+                        else
+                        {
+                            int iValue = int.Parse(value);
+                            iValue += 1;
+                            board[y1][i] = iValue.ToString();
+                        }
+                    }
+                }
+            }
+
+            int count = 0;
+            foreach (var line in board)
+            {
+                int lineLength = line.Count;
+
+                for (int i = 0; i < line.Count; ++i)
+                    if (line[i] != "." && (int.Parse(line[i]) >= 2))
+                        count++;
+            }
+
+            return count;
         }
     }
 }
