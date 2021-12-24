@@ -9,8 +9,9 @@ namespace AdventOfCode2021
     {
         static void Main(string[] args)
         {
-            List<string> input = File.ReadAllLines("Input/Day4.txt").ToList();
-            Console.WriteLine("Your answer is: " + ProblemSolver.Day4(input));
+            List<string> input = File.ReadAllLines("Input/Day5.txt").ToList();
+            Console.WriteLine("Your answer is: " + ProblemSolver.Day5Part2(input));
+            Console.ReadLine();
         }
     }
 }

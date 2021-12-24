@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AdventOfCode2021
 {
@@ -241,11 +240,10 @@ namespace AdventOfCode2021
             List<Tuple<Tuple<string, string>, Tuple<string, string>>> paths = new List<Tuple<Tuple<string, string>, Tuple<string, string>>>();
             foreach (string line in input)
             {
-                string str = line;
-                string x1 = str.Split(" -> ")[0].Split(',')[0];
-                string y1 = str.Split(" -> ")[0].Split(',')[1];
-                string x2 = str.Split(" -> ")[1].Split(',')[0];
-                string y2 = str.Split(" -> ")[1].Split(',')[1];
+                string x1 = line.Split(" -> ")[0].Split(',')[0];
+                string y1 = line.Split(" -> ")[0].Split(',')[1];
+                string x2 = line.Split(" -> ")[1].Split(',')[0];
+                string y2 = line.Split(" -> ")[1].Split(',')[1];
 
                 Tuple<string, string> firstPair = new Tuple<string, string>(x1, y1);
                 Tuple<string, string> secondPair = new Tuple<string, string>(x2, y2);
@@ -316,13 +314,130 @@ namespace AdventOfCode2021
 
             int count = 0;
             foreach (var line in board)
-            {
-                int lineLength = line.Count;
-
                 for (int i = 0; i < line.Count; ++i)
                     if (line[i] != "." && (int.Parse(line[i]) >= 2))
                         count++;
+
+            return count;
+        }
+        public static int Day5Part2(List<string> input)
+        {
+            List<List<string>> board = new List<List<string>>();
+
+            for (int i = 0; i < 1000; ++i) board.Add(Enumerable.Repeat(".", 1000).ToList());
+
+            List<Tuple<Tuple<string, string>, Tuple<string, string>>> paths = new List<Tuple<Tuple<string, string>, Tuple<string, string>>>();
+            foreach (string line in input)
+            {
+                string x1 = line.Split(" -> ")[0].Split(',')[0];
+                string y1 = line.Split(" -> ")[0].Split(',')[1];
+                string x2 = line.Split(" -> ")[1].Split(',')[0];
+                string y2 = line.Split(" -> ")[1].Split(',')[1];
+
+                Tuple<string, string> firstPair = new Tuple<string, string>(x1, y1);
+                Tuple<string, string> secondPair = new Tuple<string, string>(x2, y2);
+
+                paths.Add(new Tuple<Tuple<string, string>, Tuple<string, string>>(firstPair, secondPair));
             }
+
+            foreach (Tuple<Tuple<string, string>, Tuple<string, string>> path in paths)
+            {
+                int x1 = int.Parse(path.Item1.Item1);
+                int y1 = int.Parse(path.Item1.Item2);
+                int x2 = int.Parse(path.Item2.Item1);
+                int y2 = int.Parse(path.Item2.Item2);
+                bool xSame = x1 == x2, ySame = y1 == y2;
+
+                if (ySame && xSame)
+                {
+                    var value = board[y1][x1];
+
+                    if (value == ".") value = "1";
+                    else
+                    {
+                        int iValue = int.Parse(value);
+                        iValue += 1;
+                        board[y1][x1] = iValue.ToString();
+                    }
+                }
+                else if (xSame)
+                {
+                    int smallerY = (y1 < y2) ? y1 : y2;
+                    int largerY = (y1 > y2) ? y1 : y2;
+
+                    List<List<string>> selectedLines = board.GetRange(smallerY, largerY - smallerY);
+                    for (int i = smallerY; i <= largerY; ++i)
+                    {
+                        var value = board[i][x1];
+
+                        if (value == ".") board[i][x1] = "1";
+                        else
+                        {
+                            int iValue = int.Parse(value);
+                            iValue += 1;
+                            board[i][x1] = iValue.ToString();
+                        }
+                    }
+                }
+                else if (ySame)
+                {
+                    int smallerX = (x1 < x2) ? x1 : x2;
+                    int largerX = (x1 > x2) ? x1 : x2;
+
+                    List<string> line = board[y1];
+                    for (int i = smallerX; i <= largerX; ++i)
+                    {
+                        var value = line[i];
+
+                        if (value == ".") board[y1][i] = "1";
+                        else
+                        {
+                            int iValue = int.Parse(value);
+                            iValue += 1;
+                            board[y1][i] = iValue.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    int smallerX = (x1 < x2) ? x1 : x2;
+                    int largerX = (x1 > x2) ? x1 : x2;
+                    int smallerY = (y1 < y2) ? y1 : y2;
+                    int largerY = (y1 > y2) ? y1 : y2;
+
+                    int xDifference = largerX - smallerX;
+                    int yDifference = largerY - smallerY;
+
+                    if (xDifference == yDifference)
+                    {
+                        // starting point is always x1,y1 need to determine if we are counting down or up
+                        bool xIncreases = (x1 < x2);
+                        bool yIncreases = (y1 < y2);
+
+                        for (int i = 0; i <= xDifference; ++i)
+                        {
+                            int currentYPosition = (yIncreases) ? y1 + i : y1 - i;
+                            int currentXPosition = (xIncreases) ? x1 + i : x1 - i;
+
+                            string value = board[currentYPosition][currentXPosition];
+                            if (value == ".")
+                                board[currentYPosition][currentXPosition] = "1";
+                            else
+                            {
+                                int iValue = int.Parse(value);
+                                iValue += 1;
+                                board[currentYPosition][currentXPosition] = iValue.ToString();
+                            }
+                        }
+                    }
+                }
+            }
+
+            int count = 0;
+             foreach (var line in board)
+                for (int i = 0; i < line.Count; ++i)
+                    if (line[i] != "." && (int.Parse(line[i]) >= 2))
+                        count++;
 
             return count;
         }
