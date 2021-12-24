@@ -827,5 +827,35 @@ namespace AdventOfCode2021
             List<int> initialPool= input[0].Split(',').Select(i => int.Parse(i)).ToList();
             return Lanternfish.CalculateLanternfishReproduction(initialPool, 80);
         }
+        /*
+         *      --- Part Two ---
+                Suppose the lanternfish live forever and have unlimited food and space. Would they take over the entire ocean?
+
+                After 256 days in the example above, there would be a total of 26984457539 lanternfish!
+
+                How many lanternfish would there be after 256 days?
+         */
+        public static long Day6Part2(List<string> input)
+        {
+            Dictionary<long, long> contents = new Dictionary<long, long>()
+            {
+                { 0,0 },
+                { 1,0 },
+                { 2,0 },
+                { 3,0 },
+                { 4,0 },
+                { 5,0 },
+                { 6,0 },
+                { 7,0 },
+                { 8,0 }
+            };
+            List<long> initialPool = input[0].Split(',').Select(i => long.Parse(i)).ToList();
+
+            foreach (int i in initialPool)
+                contents[i]++;
+
+            return Lanternfish.CalculateLanternFishReproudctionRecursively(contents,256);
+            //return Lanternfish.CalculateLanternFishReproudctionRecursively(startingPool, 256);
+        }
     }
 }
