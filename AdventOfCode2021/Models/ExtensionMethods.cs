@@ -11,20 +11,20 @@ namespace AdventOfCode2021.Models
         /// </summary>
         /// <param name="str">string to remove duplicates from</param>
         /// <returns></returns>
-        public static string CollapseWhitespace(this String str)
+        public static string CollapseWhitespace(this string str)
         {
             string returnValue = string.Empty;
             char previousChar = '!';
-            foreach(char c in str)
+            foreach (char c in str)
             {
                 if (previousChar == ' ' && c == ' ')
                     continue;
                 else
                     returnValue += c;
 
-                previousChar = c;                
+                previousChar = c;
             }
             return returnValue.Trim();
-        }        
+        }
     }
 }
