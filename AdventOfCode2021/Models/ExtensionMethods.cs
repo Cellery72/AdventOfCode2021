@@ -26,5 +26,27 @@ namespace AdventOfCode2021.Models
             }
             return returnValue.Trim();
         }
+
+        public static long Factorial(this long f)
+        {
+            if (f == 0)
+                return 1;
+            else
+                return f * (Factorial(f - 1));
+        }
+
+        public static long CalculateExpontentialSteps(this long f, long newPosition)
+        {
+            long result = 0, previous = -1;
+            long movesRequired = (f > newPosition) ? f - newPosition : newPosition - f;
+
+            for (long i = 1; i <= movesRequired; ++i)
+            {
+                result += (previous != -1) ? i : 1;
+                previous = i;
+            }
+
+            return result;
+        }
     }
 }
