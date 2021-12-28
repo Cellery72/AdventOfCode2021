@@ -857,5 +857,10 @@ namespace AdventOfCode2021
             return Lanternfish.CalculateLanternFishReproudctionRecursively(contents,256);
             //return Lanternfish.CalculateLanternFishReproudctionRecursively(startingPool, 256);
         }
+
+        public static int Day7(List<string> input)
+        {
+            return -1;
+        }
     }
 }
